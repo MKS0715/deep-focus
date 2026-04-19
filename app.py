@@ -46,7 +46,9 @@ if not check_password():
     st.stop()
 
 
+# ==========================================
 # --- [1. 구글 시트 연동 설정] ---
+# ==========================================
 # 서비스 계정 키 파일 경로 (발급받은 JSON 파일)
 SERVICE_ACCOUNT_FILE = 'credentials.json' 
 # 작업할 스프레드시트 이름 또는 URL
@@ -69,8 +71,9 @@ def get_gspread_client():
 client = get_gspread_client()
 doc = client.open_by_key(SPREADSHEET_KEY)
 
+# ==========================================
 # --- [2. 주요 기능 함수] ---
-
+# ==========================================
 def get_student_list():
     """모든 시트 이름을 가져와 학생 명단 반환 (첫 번째 시트 제외)"""
     sheets = doc.worksheets()
@@ -95,14 +98,15 @@ def delete_student(name):
     except:
         return False
 
+# ==========================================
 # --- [3. 스트림릿 UI 구성] ---
-
+# ==========================================
 st.set_page_config(page_title="Deep Focus", layout="wide")
 
 st.sidebar.title("🔍 Deep Focus")
 st.sidebar.subheader("AI 학생 관찰 기록 시스템")
 
-# API 키 입력 (보안)
+# 메뉴 구성
 menu = st.sidebar.radio("메뉴", ["학생 관리", "관찰 기록 입력", "AI 요약 및 분석"])
 
 # --- 메뉴 1: 학생 관리 ---
@@ -146,7 +150,7 @@ elif menu == "관찰 기록 입력":
         
         # 입력 폼
         with st.form("record_form", clear_on_submit=True):
-            content = st.text_area("관찰 및 활동 내용 기록", placeholder="예: 수학 시간에 모둠 활동을 주도적으로 이끌며 나눗셈 원리를 친구들에게 잘 설명함.")
+            content = st.text_area("관찰 및 활동 내용 기록", placeholder="예: 체육 시간에 모둠 활동을 주도적으로 이끌며 규칙을 친구들에게 잘 설명함.")
             submitted = st.form_submit_button("기록 저장")
             
             if submitted:
@@ -166,7 +170,7 @@ elif menu == "관찰 기록 입력":
         else:
             st.write("아직 기록된 내용이 없습니다.")
 
-# --- 메뉴 3: AI 요약 및 분석 ---
+# --- 메뉴 3: AI 요약 및 분석 (수정 완료) ---
 elif menu == "AI 요약 및 분석":
     st.header("🤖 AI 행동발달사항 요약")
     student_list = get_student_list()
@@ -181,15 +185,17 @@ elif menu == "AI 요약 및 분석":
         if st.button("✨ AI 분석 시작"):
             if not records:
                 st.warning("분석할 기록이 없습니다.")
-else:
-    # ... (데이터 가공 raw_text 부분 유지)
+            else:
+                # [수정] 실수로 누락되었던 데이터 가공 코드 복구
+                raw_text = "\n".join([f"- {r['일시']}: {r['관찰내용']}" for r in records])
 
-    try:
-        # API 키를 텍스트 입력창이 아닌 st.secrets에서 직접 가져옵니다!
-        genai.configure(api_key=st.secrets["gemini_api_key"])
-        model = genai.GenerativeModel('gemini-1.5-flash')
-                    
-        prompt = f"""
+                # [수정] 들여쓰기(Indentation) 완벽 정렬
+                try:
+                    # API 키를 텍스트 입력창이 아닌 st.secrets에서 직접 가져옵니다.
+                    genai.configure(api_key=st.secrets["gemini_api_key"])
+                    model = genai.GenerativeModel('gemini-1.5-flash')
+                                        
+                    prompt = f"""
                     다음은 초등학생 '{selected_student}'의 관찰 기록입니다. 
                     이 내용을 바탕으로 생활기록부 '행동특성 및 종합의견'에 들어갈 문구 초안을 작성해 주세요.
                     
@@ -201,10 +207,11 @@ else:
                     2. 문장은 '~함.', '~임.' 형태의 개조식 문장이 아닌 완성된 문단으로 작성할 것.
                     3. 3~4줄 이내로 요약할 것.
                     """
-                    
-                with st.spinner("AI가 데이터를 분석 중입니다..."):
+                                        
+                    with st.spinner("AI가 데이터를 분석 중입니다..."):
                         response = model.generate_content(prompt)
                         st.success("분석 결과")
                         st.info(response.text)
+                        
                 except Exception as e:
                     st.error(f"오류 발생: {e}")
