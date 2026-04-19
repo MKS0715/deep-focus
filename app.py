@@ -193,7 +193,7 @@ elif menu == "AI 요약 및 분석":
                 try:
                     # API 키를 텍스트 입력창이 아닌 st.secrets에서 직접 가져옵니다.
                     genai.configure(api_key=st.secrets["gemini_api_key"])
-                    model = genai.GenerativeModel('gemini-pro')
+                    model = genai.GenerativeModel('gemini-2.5-flash')
                                         
                     prompt = f"""
                     다음은 초등학생 '{selected_student}'의 관찰 기록입니다. 
