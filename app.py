@@ -189,7 +189,7 @@ else:
         genai.configure(api_key=st.secrets["gemini_api_key"])
         model = genai.GenerativeModel('gemini-1.5-flash')
                     
-                    prompt = f"""
+        prompt = f"""
                     다음은 초등학생 '{selected_student}'의 관찰 기록입니다. 
                     이 내용을 바탕으로 생활기록부 '행동특성 및 종합의견'에 들어갈 문구 초안을 작성해 주세요.
                     
