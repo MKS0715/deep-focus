@@ -180,7 +180,7 @@ elif menu == "AI 요약 및 분석":
         
         if st.button("✨ AI 분석 시작"):
             if not records:
-    st.warning("분석할 기록이 없습니다.")
+                st.warning("분석할 기록이 없습니다.")
 else:
     # ... (데이터 가공 raw_text 부분 유지)
 
