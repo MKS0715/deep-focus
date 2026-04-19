@@ -103,7 +103,6 @@ st.sidebar.title("🔍 Deep Focus")
 st.sidebar.subheader("AI 학생 관찰 기록 시스템")
 
 # API 키 입력 (보안)
-gemini_api_key = st.sidebar.text_input("Gemini API Key", type="password")
 menu = st.sidebar.radio("메뉴", ["학생 관리", "관찰 기록 입력", "AI 요약 및 분석"])
 
 # --- 메뉴 1: 학생 관리 ---
@@ -180,18 +179,15 @@ elif menu == "AI 요약 및 분석":
         records = sheet.get_all_records()
         
         if st.button("✨ AI 분석 시작"):
-            if not gemini_api_key:
-                st.error("Gemini API Key를 입력해야 합니다.")
-            elif not records:
-                st.warning("분석할 기록이 없습니다.")
-            else:
-                # 데이터 가공
-                raw_text = "\n".join([f"- {r['일시']}: {r['관찰내용']}" for r in records])
-                
-                # AI 설정
-                try:
-                    genai.configure(api_key=gemini_api_key)
-                    model = genai.GenerativeModel('gemini-1.5-flash')
+            if not records:
+    st.warning("분석할 기록이 없습니다.")
+else:
+    # ... (데이터 가공 raw_text 부분 유지)
+
+    try:
+        # API 키를 텍스트 입력창이 아닌 st.secrets에서 직접 가져옵니다!
+        genai.configure(api_key=st.secrets["gemini_api_key"])
+        model = genai.GenerativeModel('gemini-1.5-flash')
                     
                     prompt = f"""
                     다음은 초등학생 '{selected_student}'의 관찰 기록입니다. 
