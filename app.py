@@ -202,7 +202,7 @@ else:
                     3. 3~4줄 이내로 요약할 것.
                     """
                     
-                    with st.spinner("AI가 데이터를 분석 중입니다..."):
+                with st.spinner("AI가 데이터를 분석 중입니다..."):
                         response = model.generate_content(prompt)
                         st.success("분석 결과")
                         st.info(response.text)
