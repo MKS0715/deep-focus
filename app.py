@@ -4,6 +4,7 @@ from google.oauth2.service_account import Credentials
 import google.generativeai as genai
 import pandas as pd
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 # ==========================================
 # --- [0. 로그인 화면 및 보안 설정] ---
@@ -155,7 +156,7 @@ elif menu == "관찰 기록 입력":
             
             if submitted:
                 if content:
-                    now = datetime.now().strftime("%Y-%m-%d %H:%M")
+                    now = datetime.now(ZoneInfo("Asia/Seoul")).strftime("%Y-%m-%d %H:%M")
                     sheet.append_row([now, content])
                     st.toast(f"{selected_student} 기록 완료!", icon="✅")
                 else:
