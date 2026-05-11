@@ -172,7 +172,7 @@ elif menu == "관찰 기록 입력":
 
 # --- 메뉴 3: AI 요약 및 분석 (수정 완료) ---
 elif menu == "AI 요약 및 분석":
-    st.header("🤖 AI 행동발달사항 요약")
+    st.header("🤖 AI 행동발달사항")
     student_list = get_student_list()
     
     if not student_list:
